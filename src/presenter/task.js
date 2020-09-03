@@ -1,7 +1,7 @@
 import TaskView from "../view/task.js";
 import TaskEditView from "../view/task-edit.js";
 import {render, RenderPosition, replace, remove} from "../utils/render.js";
-import { UserAction, UpdateType} from "../const.js";
+import {UserAction, UpdateType} from "../const.js";
 import {isTaskRepeating, isDatesEqual} from "../utils/task.js";
 
 const Mode = {
