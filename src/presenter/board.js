@@ -99,6 +99,7 @@ export default class Board {
           .catch(() => {
             this._taskPresenter[update.id].setViewState(TaskPresenterViewState.ABORTING);
           });
+
         break;
       case UserAction.ADD_TASK:
         this._taskNewPresenter.setSaving();
