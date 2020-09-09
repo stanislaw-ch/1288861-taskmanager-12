@@ -1,5 +1,4 @@
 import TaskEditView from "../view/task-edit.js";
-import {generateId} from "../mock/task.js";
 import {remove, render, RenderPosition} from "../utils/render.js";
 import {UserAction, UpdateType} from "../const.js";
 
@@ -9,13 +8,16 @@ export default class TaskNew {
     this._changeData = changeData;
 
     this._taskEditComponent = null;
+    this._destroyCallback = null;
 
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
-  init() {
+  init(callback) {
+    this._destroyCallback = callback;
+
     if (this._taskEditComponent !== null) {
       return;
     }
@@ -34,21 +36,41 @@ export default class TaskNew {
       return;
     }
 
+    if (this._destroyCallback !== null) {
+      this._destroyCallback();
+    }
+
     remove(this._taskEditComponent);
     this._taskEditComponent = null;
 
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
   }
 
+  setSaving() {
+    this._taskEditComponent.updateData({
+      isDisabled: true,
+      isSaving: true
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this._taskEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    this._taskEditComponent.shake(resetFormState);
+  }
+
   _handleFormSubmit(task) {
     this._changeData(
         UserAction.ADD_TASK,
         UpdateType.MINOR,
-        // Пока у нас нет сервера, который бы после сохранения
-        // выдывал честный id задачи, нам нужно позаботиться об этом самим
-        Object.assign({id: generateId()}, task)
+        task
     );
-    this.destroy();
   }
 
   _handleDeleteClick() {
