@@ -14,7 +14,7 @@ export const isTaskExpired = (dueDate) => {
 
   const currentDate = getCurrentDate();
 
-  return currentDate.getTime() > dueDate.getTime();
+  return moment(currentDate).isAfter(dueDate, `day`);
 };
 
 export const isTaskExpiringToday = (dueDate) => {
@@ -24,7 +24,7 @@ export const isTaskExpiringToday = (dueDate) => {
 
   const currentDate = getCurrentDate();
 
-  return currentDate.getTime() === dueDate.getTime();
+  return moment(dueDate).isSame(currentDate, `day`);
 };
 
 export const isTaskRepeating = (repeating) => {
@@ -82,11 +82,5 @@ export const isDatesEqual = (dateA, dateB) => {
     return true;
   }
 
-  return moment(dateA).isSame(dateB);
+  return moment(dateA).isSame(dateB, `day`);
 };
-
-// Date.now() и Math.random() - плохие решения для генерации id
-// в "продуктовом" коде, а для моков самое то.
-// Для "продуктового" кода используйте что-то понадежнее,
-// вроде nanoid - https://github.com/ai/nanoid
-export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
